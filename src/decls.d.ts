@@ -1,3 +1,4 @@
 /* === Ignore === */
 
-// declare module "lib-name";
+declare module "rollup-plugin-*";
+declare module "remark*";
