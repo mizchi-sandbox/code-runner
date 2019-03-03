@@ -22,6 +22,7 @@ export default function Main({
   initialValue: string;
   disabled: boolean;
 }) {
+  const [step, setStep] = useState(0);
   const [value, setValue] = useState(initialValue);
   const [runValue, setRunValue] = useState("");
   useLayoutEffect(() => {
@@ -29,6 +30,7 @@ export default function Main({
       if (ev.ctrlKey && ev.key.toLowerCase() === "r") {
         ev.preventDefault();
         setRunValue(value);
+        setStep(Math.random());
       }
       if (ev.metaKey && ev.key.toLowerCase() === "s") {
         ev.preventDefault();
@@ -83,7 +85,7 @@ export default function Main({
             |
             <ModalOpenButton />
           </div>
-          <CodeRunner key={Math.random()} value={runValue} />
+          <CodeRunner key={step} value={runValue} />
         </div>
       </div>
     </>
