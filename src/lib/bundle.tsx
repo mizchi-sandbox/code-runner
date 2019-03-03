@@ -1,6 +1,8 @@
 import path from "path";
 import * as rollup from "rollup";
 
+// console.log(txt);
+
 // TODO: import js
 export async function bundle(fileMap: object): Promise<string> {
   const bundle = await rollup.rollup({
@@ -10,6 +12,7 @@ export async function bundle(fileMap: object): Promise<string> {
         "index.js": "",
         ...fileMap,
         react: "export default window.React",
+        styled: "export default window.styled",
         "react-dom": "export default window.ReactDOM"
       })
     ]

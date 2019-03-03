@@ -3,6 +3,9 @@ import { compile } from "../lib/compileMarkdown";
 import React, { useRef, useLayoutEffect } from "react";
 
 import { bundle } from "../lib/bundle";
+import ReactSource from "raw-loader!react/umd/react.profiling.min.js";
+import ReactDOMSource from "raw-loader!react-dom/umd/react-dom.profiling.min.js";
+import StyledSource from "raw-loader!styled-components/dist/styled-components.js";
 
 export function CodeRunner(props: { value: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -18,8 +21,11 @@ export function CodeRunner(props: { value: string }) {
         try {
           const code = await bundle(codeMap);
           html = `
-          <div class="root"></div>
+          <div class="root" style="overflow: auto;"></div>
           <script>
+            ${ReactSource};
+            ${ReactDOMSource};
+            ${StyledSource};
             ${code};
           </script>
         `;
@@ -29,8 +35,9 @@ export function CodeRunner(props: { value: string }) {
         }
         const iframe = createIframe(html);
         iframe.style.width = "50vw";
-        iframe.style.height = "calc(80vh)";
+        iframe.style.boxSizing = "border-box";
         ref.current.innerHTML = "";
+        iframe.style.height = "calc(90vh)";
         ref.current.appendChild(iframe);
       }
     })();

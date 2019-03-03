@@ -1,5 +1,4 @@
 import * as monaco from "monaco-editor";
-
 // import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 // import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
 // import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
@@ -130,8 +129,9 @@ import * as monaco from "monaco-editor";
 //   }
 // };
 
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { ResizeDetector } from "./ResizeDetector";
+import formatMarkdown from "../lib/formatMarkdown";
 
 export default (props: {
   value: string;
@@ -145,6 +145,23 @@ export default (props: {
 
   // react to outer change by prettier
   const [initialValue, setInitialValue] = useState(props.value);
+
+  useEffect(() => {
+    const fn: any = (ev: React.KeyboardEvent<Window>) => {
+      if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "s") {
+        ev.preventDefault();
+
+        if (editor) {
+          const value = editor.getValue();
+          const newValue = formatMarkdown(value);
+          editor.setValue(newValue);
+        }
+        // editor
+      }
+    };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [editor]);
 
   useLayoutEffect(() => {
     if (initialValue !== props.value) {
