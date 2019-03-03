@@ -3,8 +3,7 @@ import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import Modal from "react-modal";
 import defaultValue from "raw-loader!./code.md";
-// import Main from "./pages/Main";
-import { Base64 } from "./lib/base64";
+const lzString = require("./lib/lz-string");
 
 Modal.setAppElement(document.querySelector(".modal") as HTMLElement);
 
@@ -26,14 +25,16 @@ const Loader = () => (
     Loading...
   </div>
 );
+
 const main = async () => {
   const root = document.querySelector(".root") as HTMLDivElement;
   const url = new URL(location.href);
 
   if (url.pathname.startsWith(VIEW_PAGE_PREFIX)) {
-    const initialValue = Base64.decode(
+    const initialValue = lzString.decompressFromEncodedURIComponent(
       url.pathname.replace(VIEW_PAGE_PREFIX, "")
     );
+
     ReactDOM.render(
       <Suspense fallback={<Loader />}>
         <Preview runValue={initialValue} />

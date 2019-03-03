@@ -4,7 +4,8 @@ import { createGlobalStyle } from "styled-components";
 import { ModalOpenButton } from "../components/ModalOpenButton";
 import { VIEW_PAGE_PREFIX } from "../main";
 import MonacoEditor from "../components/MonacoEditor";
-import { Base64 } from "../lib/base64";
+const lzString = require("../lib/lz-string");
+
 const GlobalStyle = createGlobalStyle`
   html, body {
     margin: 0;
@@ -59,11 +60,9 @@ export default function Main({
                 width="50vw"
                 onChangeValue={(value: string) => {
                   setValue(value);
-                  history.replaceState(
-                    "",
-                    {} as any,
-                    `/${Base64.encode(value)}`
-                  );
+                  // const base64ed = Base64.encode(value);
+                  const lzed = lzString.compressToEncodedURIComponent(value);
+                  history.replaceState("", {} as any, `/${lzed}`);
                 }}
               />
             )}
@@ -71,11 +70,20 @@ export default function Main({
         </div>
         <div style={{ flex: 1, maxWidth: "50%", overflow: "hidden" }}>
           <div>
-            <button onClick={() => setRunValue(value)}>Run(Ctrl-S)</button>|
+            <button
+              onClick={() => {
+                setStep(Math.random());
+                setRunValue(value);
+              }}
+            >
+              Run(Ctrl-S)
+            </button>
+            |
             <button
               onClick={() => {
                 const u = new URL(location.href);
-                u.pathname = `${VIEW_PAGE_PREFIX}${Base64.encode(value)}`;
+                const lzed = lzString.compressToEncodedURIComponent(value);
+                u.pathname = `${VIEW_PAGE_PREFIX}${lzed}`;
                 // @ts-ignore
                 navigator.clipboard.writeText(u.toString());
               }}
