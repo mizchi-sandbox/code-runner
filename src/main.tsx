@@ -7,6 +7,8 @@ import Modal from "react-modal";
 import { ModalOpenButton } from "./components/ModalOpenButton";
 import defaultValue from "raw-loader!./code.md";
 
+// const defaultValue = "";
+
 Modal.setAppElement(document.querySelector(".modal") as HTMLElement);
 
 const GlobalStyle = createGlobalStyle`
