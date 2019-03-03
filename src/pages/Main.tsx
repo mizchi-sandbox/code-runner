@@ -4,6 +4,7 @@ import { createGlobalStyle } from "styled-components";
 import { ModalOpenButton } from "../components/ModalOpenButton";
 import { VIEW_PAGE_PREFIX } from "../main";
 import MonacoEditor from "../components/MonacoEditor";
+
 const lzString = require("../lib/lz-string");
 
 const GlobalStyle = createGlobalStyle`
@@ -76,7 +77,7 @@ export default function Main({
                 setRunValue(value);
               }}
             >
-              Run(Ctrl-S)
+              Run(Ctrl-R)
             </button>
             |
             <button
@@ -84,11 +85,17 @@ export default function Main({
                 const u = new URL(location.href);
                 const lzed = lzString.compressToEncodedURIComponent(value);
                 u.pathname = `${VIEW_PAGE_PREFIX}${lzed}`;
+                const newUrl = u.toString();
+                console.log("size", newUrl);
+                if (newUrl.length > 2048) {
+                  alert(`Warning: URL length over 2048: ${newUrl.length}`);
+                }
+                location.href = newUrl;
                 // @ts-ignore
-                navigator.clipboard.writeText(u.toString());
+                // navigator.clipboard.writeText(u.toString());
               }}
             >
-              Copy public path to clipboard
+              Open
             </button>
             |
             <ModalOpenButton />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CodeRunner } from "../components/CodeRunner";
 import { compile } from "../lib/compileMarkdown";
 import "highlight.js/styles/default";
@@ -8,6 +8,9 @@ import DOMPurify from "dompurify";
 export default ({ runValue }: { runValue: string }) => {
   const [ran, setRan] = useState(false);
   const html = compile(runValue);
+  useEffect(() => {
+    document.title = runValue.split("\n")[0].replace(/\#+\s/, "");
+  }, []);
   return (
     <div
       style={{
@@ -27,11 +30,7 @@ export default ({ runValue }: { runValue: string }) => {
       </div>
 
       <div style={{ flex: 1 }}>
-        <a
-          type="button"
-          href={location.href.replace("/view-", "/")}
-          target="_blank"
-        >
+        <a type="button" href={location.href.replace("/view-", "/")}>
           edit
         </a>
         {ran ? (

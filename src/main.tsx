@@ -42,7 +42,15 @@ const main = async () => {
       root
     );
   } else {
-    const initialValue = localStorage.getItem("editor:value") || defaultValue;
+    let initialValue = defaultValue;
+    if (url.pathname.length > 1) {
+      initialValue = lzString.decompressFromEncodedURIComponent(
+        url.pathname.slice(1)
+      );
+    } else {
+      initialValue = localStorage.getItem("editor:value");
+    }
+
     ReactDOM.render(
       <Suspense fallback={<Loader />}>
         <Main initialValue={initialValue} disabled={false} />
