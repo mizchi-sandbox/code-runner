@@ -1,17 +1,8 @@
 import * as ts from "typescript";
 import { compile } from "../lib/compileMarkdown";
 import React, { useRef, useLayoutEffect } from "react";
-import { readFileSync } from "fs";
 
 import { bundle } from "../lib/bundle";
-
-const ReactSource = readFileSync(
-  __dirname + "/../../node_modules/react/umd/react.development.js"
-).toString();
-
-const ReactDOMSource = readFileSync(
-  __dirname + "/../../node_modules/react-dom/umd/react-dom.development.js"
-).toString();
 
 export function CodeRunner(props: { value: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -29,8 +20,6 @@ export function CodeRunner(props: { value: string }) {
           html = `
           <div class="root"></div>
           <script>
-            ${ReactSource};
-            ${ReactDOMSource};
             ${code};
           </script>
         `;

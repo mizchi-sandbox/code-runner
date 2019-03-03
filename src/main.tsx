@@ -1,9 +1,11 @@
 import "@babel/polyfill";
-
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, Suspense } from "react";
 import ReactDOM from "react-dom";
-import MonacoEditor from "./components/MonacoEditor";
 import { CodeRunner } from "./components/CodeRunner";
+
+const MonacoEditor = React.lazy(async () =>
+  import("./components/MonacoEditor")
+);
 
 const initialValue =
   localStorage.getItem("editor:value") ||
@@ -56,13 +58,15 @@ function App() {
     <>
       <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
         <div style={{ flex: 1, maxWidth: "50vw" }}>
-          <MonacoEditor
-            value={value}
-            width="50vw"
-            onChangeValue={value => {
-              setValue(value);
-            }}
-          />
+          <Suspense fallback={() => <>loading...</>}>
+            <MonacoEditor
+              value={value}
+              width="50vw"
+              onChangeValue={(value: string) => {
+                setValue(value);
+              }}
+            />
+          </Suspense>
         </div>
         <div style={{ flex: 1, maxWidth: "50%" }}>
           <button onClick={() => setRunValue(value)}>Run</button>

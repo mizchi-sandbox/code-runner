@@ -2,7 +2,7 @@ import path from "path";
 import * as rollup from "rollup";
 
 // TODO: import js
-export async function bundle(fileMap: object) {
+export async function bundle(fileMap: object): Promise<string> {
   const bundle = await rollup.rollup({
     input: "index.js",
     plugins: [
@@ -21,8 +21,7 @@ export async function bundle(fileMap: object) {
     extend: true
   });
   // eval
-  const code = gen.output[0].code as string;
-  return code;
+  return gen.output[0].code as string;
 }
 
 // plugin
