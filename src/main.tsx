@@ -12,6 +12,20 @@ const Main = React.lazy(() => import("./pages/Main"));
 const Preview = React.lazy(() => import("./pages/Preview"));
 
 export const VIEW_PAGE_PREFIX = "/view-";
+const Loader = () => (
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
+      height: "100%"
+    }}
+  >
+    Loading...
+  </div>
+);
 const main = async () => {
   const root = document.querySelector(".root") as HTMLDivElement;
   const url = new URL(location.href);
@@ -21,7 +35,7 @@ const main = async () => {
       url.pathname.replace(VIEW_PAGE_PREFIX, "")
     );
     ReactDOM.render(
-      <Suspense fallback={<span>loading...</span>}>
+      <Suspense fallback={<Loader />}>
         <Preview runValue={initialValue} />
       </Suspense>,
       root
@@ -29,7 +43,7 @@ const main = async () => {
   } else {
     const initialValue = localStorage.getItem("editor:value") || defaultValue;
     ReactDOM.render(
-      <Suspense fallback={<span>loading...</span>}>
+      <Suspense fallback={<Loader />}>
         <Main initialValue={initialValue} disabled={false} />
       </Suspense>,
       root
