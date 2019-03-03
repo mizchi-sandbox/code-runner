@@ -1,16 +1,11 @@
 import "@babel/polyfill";
 import * as rollup from "rollup";
-import virtual from "rollup-plugin-virtual";
+// import virtual from "rollup-plugin-virtual";
+import virtual from "./lib/rollup-plugin-virtual";
 import { readFileSync } from "fs";
 import { compile } from "./lib/compileMarkdown";
 
-import React, {
-  useRef,
-  useLayoutEffect,
-  useState,
-  useEffect,
-  useCallback
-} from "react";
+import React, { useRef, useLayoutEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import MonacoEditor from "./components/MonacoEditor";
 import * as ts from "typescript";
@@ -28,22 +23,24 @@ const initialValue =
   `# Markdown Code Runner
 
 - Edit your code with comment like \`// file:<filepath>\`
-- Click Run button or Ctrl-S
+- Click Run button or Ctrl-R
 - Save current beffer by Meta-S
 
 \`\`\`ts
 // file:App.tsx
+import React from "react";
 export default (props: { name: string }) => {
   return <div>Hello, {props.name}</div>;
 }
 \`\`\`
 
 \`\`\`ts
+// file:index.tsx
 import React from "react";
 import ReactDOM from "react-dom";
 import App from './App';
 
-const el: any = document.querySelector(".root");
+const el = document.querySelector(".root");
 ReactDOM.render(<App name="World" />, el);
 \`\`\`
 `;
@@ -78,20 +75,19 @@ function sourceToCode(value: string) {
 
 function Runner(props: { value: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  useLayoutEffect(
-    () => {
-      (async () => {
-        if (ref.current) {
-          const ret = compile(props.value);
+  useLayoutEffect(() => {
+    (async () => {
+      if (ref.current) {
+        const ret = compile(props.value);
 
-          const codeMap = ret.codeblocks.reduce((acc: object, i: any) => {
-            const [filename, code] = sourceToCode(i.value);
-            return { ...acc, [filename]: code };
-          }, {});
-          let html = "";
-          try {
-            const code = await bundle(codeMap);
-            html = `
+        const codeMap = ret.codeblocks.reduce((acc: object, i: any) => {
+          const [filename, code] = sourceToCode(i.value);
+          return { ...acc, [filename]: code };
+        }, {});
+        let html = "";
+        try {
+          const code = await bundle(codeMap);
+          html = `
           <div class="root"></div>
           <script>
             ${ReactSource};
@@ -99,21 +95,19 @@ function Runner(props: { value: string }) {
             ${code};
           </script>
         `;
-          } catch (e) {
-            console.error(e);
-            html = `<div style="color: red;">${e.toString()}</div>`;
-          }
-          const iframe = createIframe(html);
-          iframe.style.width = "50vw";
-          iframe.style.height = "calc(80vh)";
-
-          ref.current.innerHTML = "";
-          ref.current.appendChild(iframe);
+        } catch (e) {
+          console.error(e);
+          html = `<div style="color: red;">${e.toString()}</div>`;
         }
-      })();
-    },
-    [props.value]
-  );
+        const iframe = createIframe(html);
+        iframe.style.width = "50vw";
+        iframe.style.height = "calc(80vh)";
+
+        ref.current.innerHTML = "";
+        ref.current.appendChild(iframe);
+      }
+    })();
+  }, [props.value]);
 
   return (
     <div>
@@ -126,24 +120,21 @@ function App() {
   const [value, setValue] = useState(initialValue);
   const [runValue, setRunValue] = useState("");
 
-  useLayoutEffect(
-    () => {
-      const onKeyDown = (ev: KeyboardEvent) => {
-        if (ev.ctrlKey && ev.key.toLowerCase() === "r") {
-          ev.preventDefault();
-          setRunValue(value);
-        }
+  useLayoutEffect(() => {
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.ctrlKey && ev.key.toLowerCase() === "r") {
+        ev.preventDefault();
+        setRunValue(value);
+      }
 
-        if (ev.metaKey && ev.key.toLowerCase() === "s") {
-          ev.preventDefault();
-          localStorage.setItem("editor:value", value);
-        }
-      };
-      window.addEventListener("keydown", onKeyDown);
-      return () => window.removeEventListener("keydown", onKeyDown);
-    },
-    [value]
-  );
+      if (ev.metaKey && ev.key.toLowerCase() === "s") {
+        ev.preventDefault();
+        localStorage.setItem("editor:value", value);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [value]);
 
   return (
     <>

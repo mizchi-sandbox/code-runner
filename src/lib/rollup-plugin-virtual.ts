@@ -1,8 +1,7 @@
 import path from "path";
 const PREFIX = `\0virtual:`;
 
-// wip
-export function virtual(modules: any) {
+export default function virtual(modules: any) {
   const resolvedIds = new Map();
 
   Object.keys(modules).forEach(id => {
